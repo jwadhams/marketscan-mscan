@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MarketScan mScan API</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>MarketScan mScan API</h1>
+
+      <h2>Vehicle</h2>
+      <form class="form-inline" id="vehicle_lookup">
+        <div class="form-group">
+          <label >VIN</label>
+          <input class="form-control" name="vin" value="1G1YB2D73G5121725" />
+        </div>
+
+        <button type="submit" class="btn btn-default">Look Up</button>
+      </form>
+      <div id="about_vehicle" class="alert alert-info " style="display:none;"></div>
+
+
+
+      <div id="payments" style="display:none;">
+
+        <div class="form-group">
+          <label >Price</label>
+          <input class="form-control" name="Price" />
+        </div>
+
+
+
+        <button class="btn btn-primary" id="recalculate" data-loading-text="Recalculating...">Recalculate</button>
+
+        <h2>Leases</h2>
+        <table class="table" id="lease">
+          <thead> <tr>
+            <th>⬇ Term / Down Payment ➡</th>
+            <td> <input class="down" value="0"/> </td>
+            <td> <input class="down" value="1000"/> </td>
+            <td> <input class="down" value="2000"/> </td>
+            <td> <input class="down" value="3000"/> </td>
+          </tr> </thead>
+          <tbody>
+            <tr> <th> <input class="term" value="24" /> </th> </tr>
+            <tr> <th> <input class="term" value="36" /> </th> </tr>
+            <tr> <th> <input class="term" value="48" /> </th> </tr>
+            <tr> <th> <input class="term" value="60" /> </th> </tr>
+          </tbody>
+        </table>
+
+        <h2>Retail (Loans)</h2>
+        <table class="table" id="retail">
+          <thead> <tr>
+            <th>⬇ Term / Down Payment ➡</th>
+            <td> <input class="down" value="0"/> </td>
+            <td> <input class="down" value="1000"/> </td>
+            <td> <input class="down" value="2000"/> </td>
+            <td> <input class="down" value="3000"/> </td>
+          </tr> </thead>
+          <tbody>
+            <tr> <th> <input class="term" value="24" /> </th> </tr>
+            <tr> <th> <input class="term" value="36" /> </th> </tr>
+            <tr> <th> <input class="term" value="48" /> </th> </tr>
+            <tr> <th> <input class="term" value="60" /> </th> </tr>
+            <tr> <th> <input class="term" value="72" /> </th> </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+
+    </div>
+    <script></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script src="index.js"> </script>
+
+  </body>
+</html>
