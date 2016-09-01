@@ -11,7 +11,7 @@ The original implementation is designed to take inventory and prices from an exi
 You can install this library through Composer:
 
 ```bash
-composer install --save marketscan/mscan
+composer require marketscan/mscan
 ```
 
 In your code, instantiate the API client by passing your Partner ID and Account number to the constructor.  Optionally you can pass in the root URL as the third argument.
@@ -48,5 +48,5 @@ The library ships with a demo page that takes a VIN and uses mPencil to get a ma
   1. Clone this repository
   1. In the repo folder, run `composer install` to load dependencies and set up the autoloader.
   1. `cp demo/credentials-sample.php demo/credentials.php` then update credentials.php with actual MarketScan credentials from your account team.  (This new file will be ignored by git if you commit changes for a pull request.)
-  1. Start the PHP local server: `php -S localhost:6969 -t demo`
-  1. Open your browser to (http://localhost:4242)[http://localhost:4242]
+  1. Start the PHP local server: `php -S localhost:4242 -t demo`
+  1. Open your browser to [http://localhost:4242](http://localhost:4242)
