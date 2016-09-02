@@ -1,4 +1,4 @@
 <?php
 
-$marketscan_account = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
-$marketscan_partner_id = '000000';
+$marketscan_partner_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+$marketscan_account = '000000';

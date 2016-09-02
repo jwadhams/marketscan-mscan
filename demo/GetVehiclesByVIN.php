@@ -8,7 +8,7 @@ use MarketScan\MScan;
 
 //Load credentials, then intialize an MScan API instance
 require 'credentials.php';
-$mscan = new MScan($marketscan_account, $marketscan_partner_id);
+$mscan = new MScan($marketscan_partner_id, $marketscan_account );
 
 if(!isset($_REQUEST['vin'])){
   http_response_code(400);
