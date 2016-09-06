@@ -55,8 +55,7 @@ class MScan{
   }
 
   /*
-    Testing with a 2011 Elantra, results are the same whether is_new is true or false
-
+    Note, when looking up a specific VIN from inventory, you're better off using GetVehiclesByVINParams and passing the VIN string as the only arg
   */
   public function GetVehiclesByVIN($vin, $is_new = true){
     return $this->api_request(
@@ -65,6 +64,29 @@ class MScan{
       $vin . '/' . $this->bool_to_url_component($is_new)
     );
   }
+
+
+  /*
+    Can be called either with just a VIN string:
+    $mscan->GetVehiclesByVINParams('1G1YA2D73H5104346');
+
+    Or with any of the supported parameters in an associative array:
+    $mscan->GetVehiclesByVINParams['VIN'=>'1G1YA2D73H5', 'Model'=>"Corvette", 'Year'=>2016]);
+  */
+  public function GetVehiclesByVINParams($arg){
+    if(is_array($arg)){
+      $params = $arg;
+    }else{
+      $params = ['VIN' => $arg];
+    }
+    return $this->api_request(
+      'GetVehiclesByVINParams',
+      'POST',
+      '',
+      $params
+    );
+  }
+
 
   public function GetMarketByZIP($zip){
     return $this->api_request(

@@ -17,10 +17,4 @@ if(!isset($_REQUEST['vin'])){
   $vin = $_REQUEST['vin'];
 }
 
-if(isset($_REQUEST['new'])){
-  $new = $mscan->url_component_to_bool($_REQUEST['new']);
-}else{
-  $new = true;
-}
-
-echo json_encode($mscan->GetVehiclesByVIN($vin, $new), JSON_PRETTY_PRINT);
+echo json_encode($mscan->GetVehiclesByVINParams($vin), JSON_PRETTY_PRINT);
