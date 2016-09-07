@@ -19,6 +19,10 @@ class MScan{
   const SCANTYPE_PAYMENT = 2;
   const SCANTYPE_MAXI = 3; //Used to calculate the scan by the maximum profit allowed. The scan will collect maximum upfront profit that can be made - difference between Selling Price and Dealer Cost. The scan will collect the maximum paid reserve that is allowed by the lender and deal structure. This scan will maximize all other values that can be marked up for profit.
 
+  // Returned as part of GetManufacturer dictates whether RunScan should pass the Customer's ZIP or the Dealer's ZIP in AutoRebateParams.ZIP
+  const MANUFACTURER_REBATE_ZIP_DEALER = 1;
+  const MANUFACTURER_REBATE_ZIP_CUSTOMER = 0;
+
   private $partner_id;
   private $account;
   private $base_url = 'http://integration.marketscan.com/mscanservice/rest/mscanservice.rst/?';
@@ -85,6 +89,20 @@ class MScan{
       '',
       $params
     );
+  }
+
+  /*
+    Given a vehicle ID, get the Manufacturer name and more importantly, whether that manufacturer's rebates regions are governed by the dealership's ZIP or the customer's
+
+    Not clear what relationship there is between Make and Manufacturer
+  */
+  public function GetManufacturer($vehicle_id){
+    return $this->api_request(
+      'GetManufacturer',
+      'GET',
+      $vehicle_id
+    );
+
   }
 
 
