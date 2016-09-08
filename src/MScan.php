@@ -35,10 +35,6 @@ class MScan{
     }
   }
 
-  public static function hello(){
-    return "Hello World";
-  }
-
   public function api_request($command, $method = "GET", $append_to_url = "", $data = null){
     $client = new \GuzzleHttp\Client();
     $url = $this->base_url . $command . '/' . $this->partner_id . '/' . $this->account;
@@ -92,9 +88,7 @@ class MScan{
   }
 
   /*
-    Given a vehicle ID, get the Manufacturer name and more importantly, whether that manufacturer's rebates regions are governed by the dealership's ZIP or the customer's
-
-    Not clear what relationship there is between Make and Manufacturer
+    Given a vehicle ID, get the Manufacturer name and rebates ZIP policy
   */
   public function GetManufacturer($vehicle_id){
     return $this->api_request(
@@ -103,6 +97,22 @@ class MScan{
       $vehicle_id
     );
 
+  }
+
+  /*
+    Get a complete list of manufacturers, what make IDs belong to each manufacturer, and what that manufacturer's rebate ZIP policy is.
+
+    It might be more useful to transform this result into a simpler map like:
+    [
+      'make ID' => 'ZIP policy',
+      'make ID' => 'ZIP policy',
+    ]
+  */
+  public function GetManufacturers(){
+    return $this->api_request(
+      'GetManufacturers',
+      'GET'
+    );
   }
 
 
