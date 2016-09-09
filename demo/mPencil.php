@@ -12,7 +12,7 @@ $mscan = new MScan($marketscan_partner_id, $marketscan_account );
 
 $scan_request = [
   "AutoRebateParams" => [
-    "ZIP" => 93012
+    "ZIP" => 93012 //See README.md for description
   ],
   "CreditScore" => 890,
   //DesiredValue is desired profit for SCANTYPE_PROFIT
@@ -40,7 +40,7 @@ $scan_request = [
 
   "RetailPart" => [],
 
-  "Market" => 51,
+  "Market" => 51, //This is the result of GetMarketByZIP
   "ScanMode" => MScan::SCANMODE_MPENCIL,
   "ScanType" => MScan::SCANTYPE_SELLINGPRICE,
   "StateFeeTax" => [

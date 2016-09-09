@@ -22,14 +22,62 @@ $mscan = new \MarketScan\MScan(
 );
 ```
 
-Wherever possible, I'd recommend you use the methods that take direct arguments:
+## Commands
+
+### Looking up vehicles
+
+The most powerful way to look up vehicles is using `GetVehiclesByVINParams`.
+
+You can look up a specific vehicle by VIN by passing that as the only parameter:
 
 ```php
-$mscan->GetVehiclesByVIN('1G1YB2D73G5121725');
+$mscan->GetVehiclesByVINParams('1G1YB2D73G5121725');
+```
+
+You can also pass a more detailed query object that uses the MarketScan VIN exploder to search your inventory. [See documentation for details.](http://www.marketscan.com/mScanAPIDocumentation/html/15d771de-6906-4951-9ccf-9d9a97c48269.htm)
+
+```php
+$mscan->GetVehiclesByVINParams([
+  'Vin' => '1G1YB2D73G5',
+  'IsNew' => true
+]);
+```
+
+You can get a complete list of Makes and Models. Each call takes one parameter, if true it returns Makes or Models that are currently New, if false it returns Makes and Models that may be available used (e.g., DMC, Plymouth).
+
+```php
+$mscan->GetMakes(true);
+$mscan->GetModels(true);
+```
+
+
+### Get Manufacturer Information
+
+You can get a complete list of supported manufacturers, and their rebate ZIP policy. This information rarely changes and can be cached.
+
+```php
+$mscan->GetManufacturers();
+```
+
+This result is useful in building the `AutoRebateParams.ZIP` in a `RunScan` request.
+
+You can also get the manufacturer of a specific vehicle (by MarketScan Vehicle ID):
+
+```php
+$mscan->GetManufacturer($vehicle_id);
+```
+
+### Information About Your Dealership
+
+You can look up the code MarketScan uses to describe your region by looking up the ZIP code of your dealership:
+
+```php
 $mscan->GetMarketByZIP(68123);
 ```
 
-The entire API has not yet been mapped in this way (pull requests are welcome). If you need an API method that is not yet implemented directly, the general form for API calls is:
+### Etc.
+
+The entire API has not yet been mapped to PHP methods yet. (Pull requests are welcome!) If you need an API method that is not yet implemented directly, the general form for API calls is:
 
 ```php
 $mscan->api_request(
@@ -39,6 +87,8 @@ $mscan->api_request(
   'data to JSON encode and POST in the request body'
 );
 ```
+
+Some of these API actions, especially `RunScan`, offer incredibly fine-grained control. If you need help figuring out what options can be passed, check out [MarketScan's API documentation](http://www.marketscan.com/mScanAPIDocumentation/html/Welcome.htm).
 
 ## Demo Pages
 
