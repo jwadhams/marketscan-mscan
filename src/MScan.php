@@ -154,6 +154,35 @@ class MScan{
   }
 
 
+  /*
+    Parameter-based search of rebates for a vehicle in a ZIP code
+    Region ID is optional. Always? Just if NULL from GetVehicleRebateRegions ?
+  */
+  public function GetRebatesParams($vehicle_id, $zip, $region_id = null, $expired = false){
+
+    return $this->api_request(
+      'GetRebatesParams',
+      'POST',
+      '',
+      [
+        'DateTimeStamp' => date(DateTime::ISO8601), //'2016-09-13T03:07:46.069Z'
+        'VehicleID' => $vehicle_id,
+        'ZIP' => $zip,
+        'RegionID' => $region_id,
+        'IncludeExpired' => $expired,
+      ]
+    );
+  }
+
+  //Can return region numbers based on vehicle and ZIP. If a ZIP straddles two regions, you can disambiguate by city in Name in the response
+  //Can also return null -- possibly Manufacturer-based?
+  public function GetVehicleRebateRegions($vehicle_id, $zip){
+    return $this->api_request(
+      'GetVehicleRebateRegions',
+      'GET',
+      $vehicle_id . '/' . $zip
+    );
+  }
 
 
   public static function bool_to_url_component($bool){
