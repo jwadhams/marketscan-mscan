@@ -165,7 +165,7 @@ class MScan{
       'POST',
       '',
       [
-        'DateTimeStamp' => date(DateTime::ISO8601), //'2016-09-13T03:07:46.069Z'
+        'DateTimeStamp' => date(\DateTime::ISO8601), //'2016-09-13T03:07:46.069Z'
         'VehicleID' => $vehicle_id,
         'ZIP' => $zip,
         'RegionID' => $region_id,
