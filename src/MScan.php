@@ -11,7 +11,8 @@ http://www.marketscan.com/mScanAPIDocumentation/html/b40172da-018e-4a80-a14f-379
 class MScan{
 
   const SCANMODE_LEASE = 0;
-  const SCANMODE_LOAN = 1;
+  const SCANMODE_RETAIL = 1;
+  const SCANMODE_LOAN = 1; //Synonym
   const SCANMODE_MPENCIL = 2;
 
   const SCANTYPE_PROFIT = 0;
@@ -87,6 +88,13 @@ class MScan{
     );
   }
 
+  public function GetLenders(){
+    return $this->api_request(
+      'GetLenders',
+      'GET'
+    );
+  }
+
   /*
     Given a vehicle ID, get the Manufacturer name and rebates ZIP policy
   */
@@ -96,7 +104,6 @@ class MScan{
       'GET',
       $vehicle_id
     );
-
   }
 
   /*
@@ -159,18 +166,22 @@ class MScan{
     Region ID is optional. Always? Just if NULL from GetVehicleRebateRegions ?
   */
   public function GetRebatesParams($vehicle_id, $zip, $region_id = null, $expired = false){
+    $body = [
+      'DateTimeStamp' => date(\DateTime::ISO8601), //'2016-09-13T03:07:46.069Z'
+      'VehicleID' => $vehicle_id,
+      'ZIP' => $zip,
+      'IncludeExpired' => $expired,
+    ];
+    if($region_id){
+      $body['RegionID'] = $region_id;
+    }
+
 
     return $this->api_request(
       'GetRebatesParams',
       'POST',
       '',
-      [
-        'DateTimeStamp' => date(\DateTime::ISO8601), //'2016-09-13T03:07:46.069Z'
-        'VehicleID' => $vehicle_id,
-        'ZIP' => $zip,
-        'RegionID' => $region_id,
-        'IncludeExpired' => $expired,
-      ]
+      $body
     );
   }
 
