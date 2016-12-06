@@ -37,7 +37,6 @@ class MScan{
   }
 
   public function api_request($command, $method = "GET", $append_to_url = "", $data = null){
-    $client = new \GuzzleHttp\Client();
     $url = $this->base_url . $command . '/' . $this->partner_id . '/' . $this->account;
 
     if($append_to_url){
@@ -45,21 +44,26 @@ class MScan{
       $url .= $append_to_url;
     }
 
-    $options = [];
     if($data !== null){
-      $options['json'] = $data;
+      $data = json_encode($data);
     }
 
+    return new \GuzzleHttp\Psr7\Request($method, $url, [], $data);
+  }
 
-    $res = $client->request($method, $url, $options);
-    return json_decode( $res->getBody(), true );
+  public function call_api($command, $method = "GET", $append_to_url = "", $data = null){
+    $request = $this->api_request($command, $method, $append_to_url, $data);
+
+    $client = new \GuzzleHttp\Client();
+    $response = $client->send($request);
+    return json_decode( $response->getBody(), true );
   }
 
   /*
     Note, when looking up a specific VIN from inventory, you're better off using GetVehiclesByVINParams and passing the VIN string as the only arg
   */
   public function GetVehiclesByVIN($vin, $is_new = true){
-    return $this->api_request(
+    return $this->call_api(
       'GetVehiclesByVIN',
       'GET',
       $vin . '/' . $this->bool_to_url_component($is_new)
@@ -80,7 +84,7 @@ class MScan{
     }else{
       $params = ['VIN' => $arg];
     }
-    return $this->api_request(
+    return $this->call_api(
       'GetVehiclesByVINParams',
       'POST',
       '',
@@ -89,7 +93,7 @@ class MScan{
   }
 
   public function GetLenders(){
-    return $this->api_request(
+    return $this->call_api(
       'GetLenders',
       'GET'
     );
@@ -99,7 +103,7 @@ class MScan{
     Given a vehicle ID, get the Manufacturer name and rebates ZIP policy
   */
   public function GetManufacturer($vehicle_id){
-    return $this->api_request(
+    return $this->call_api(
       'GetManufacturer',
       'GET',
       $vehicle_id
@@ -116,7 +120,7 @@ class MScan{
     ]
   */
   public function GetManufacturers(){
-    return $this->api_request(
+    return $this->call_api(
       'GetManufacturers',
       'GET'
     );
@@ -124,7 +128,7 @@ class MScan{
 
 
   public function GetMarketByZIP($zip){
-    return $this->api_request(
+    return $this->call_api(
       'GetMarketByZIP',
       'GET',
       $zip
@@ -132,7 +136,7 @@ class MScan{
   }
 
   public function GetMakes($is_new = true){
-    return $this->api_request(
+    return $this->call_api(
       'GetMakes',
       'GET',
       $this->bool_to_url_component($is_new)
@@ -141,7 +145,7 @@ class MScan{
 
   //Not clear why this doesn't take a filter by make, I guess you can get the global list (maybe rarely, once a day?) and filter it yourself?
   public function GetModels($is_new = true){
-    return $this->api_request(
+    return $this->call_api(
       'GetModels',
       'GET',
       $this->bool_to_url_component($is_new)
@@ -149,7 +153,7 @@ class MScan{
   }
 
   public function RunScan($scan_request){
-    return $this->api_request(
+    return $this->call_api(
       'RunScan',
       'POST',
       '',
@@ -158,6 +162,11 @@ class MScan{
 
 //In the response, AmountFinanced = Price + AcquisitionFee + InceptionFeesTaxes - TotalRebate - (customer cash which isn't part of the response?)
 
+  }
+
+  //So you want to run a few at once
+  public function RunScan_request($scan_data){
+    return $this->api_request("RunScan", "POST", '', $scan_data);
   }
 
 
@@ -177,7 +186,7 @@ class MScan{
     }
 
 
-    return $this->api_request(
+    return $this->call_api(
       'GetRebatesParams',
       'POST',
       '',
@@ -188,7 +197,7 @@ class MScan{
   //Can return region numbers based on vehicle and ZIP. If a ZIP straddles two regions, you can disambiguate by city in Name in the response
   //Can also return null -- possibly Manufacturer-based?
   public function GetVehicleRebateRegions($vehicle_id, $zip){
-    return $this->api_request(
+    return $this->call_api(
       'GetVehicleRebateRegions',
       'GET',
       $vehicle_id . '/' . $zip
