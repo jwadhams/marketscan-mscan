@@ -20,6 +20,12 @@ class MScan{
   const SCANTYPE_PAYMENT = 2;
   const SCANTYPE_MAXI = 3; //Used to calculate the scan by the maximum profit allowed. The scan will collect maximum upfront profit that can be made - difference between Selling Price and Dealer Cost. The scan will collect the maximum paid reserve that is allowed by the lender and deal structure. This scan will maximize all other values that can be marked up for profit.
 
+
+  //Filter RunScan results to, for example, only include specials
+  const SPECIALSTANDARD_BOTH = 0;
+  const SPECIALSTANDARD_SPECIAL_ONLY = 1;
+  const SPECIALSTANDARD_STANDARD_ONLY = 2;
+
   // Returned as part of GetManufacturer dictates whether RunScan should pass the Customer's ZIP or the Dealer's ZIP in AutoRebateParams.ZIP
   const MANUFACTURER_REBATE_ZIP_DEALER = 1;
   const MANUFACTURER_REBATE_ZIP_CUSTOMER = 0;
