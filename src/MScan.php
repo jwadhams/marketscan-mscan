@@ -38,7 +38,7 @@ class MScan{
     $this->partner_id = $partner_id;
     $this->account = $account;
     if($base_url){
-      $this->$base_url = $base_url;
+      $this->base_url = $base_url;
     }
   }
 
