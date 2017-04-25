@@ -53,13 +53,11 @@ $mscan->GetModels(true);
 
 ### Get Manufacturer Information
 
-You can get a complete list of supported manufacturers, and their rebate ZIP policy. This information rarely changes and can be cached.
+You can get a complete list of supported manufacturers. This information rarely changes and can be cached.
 
 ```php
 $mscan->GetManufacturers();
 ```
-
-This result is useful in building the `AutoRebateParams.ZIP` in a `RunScan` request.
 
 You can also get the manufacturer of a specific vehicle (by MarketScan Vehicle ID):
 
@@ -112,9 +110,8 @@ To set up your dealership:
 To `RunScan` for a vehicle (assuming you're starting with its VIN):
 
   1. Get the MarketScan vehicle ID by calling `GetVehiclesByVINParams` with the VIN as the only string argument: `$mscan->GetVehiclesByVINParams($vin)`
-  1. In those results, you'll get a Make ID (e.g., Jaguar = 13415). Look up that Make ID in your cached results of `GetManufacturers` to figure out whose ZIP is used to localize manufacturer rebates. (e.g., Jaguar uses customer's ZIP, Lexus uses dealer's)
   1. Build your [request object to pass to RunScan](http://www.marketscan.com/mScanAPIDocumentation/html/ed481d63-01f7-38fc-e444-c14233114f11.htm).
     1. Set `Vehicle.ID` to the value you received from `GetVehiclesByVINParams`
-    1. If the vehicle manufacturer's `RebateZIPPreference` is 0, set `AutoRebateParams.ZIP` to the customer's ZIP
-    1. If the vehicle manufacturer's `RebateZIPPreference` is 1, set `AutoRebateParams.ZIP` to the dealer's ZIP
+    1. Set `AutoRebateParams.ZIP` to the customer's ZIP
+    1. Set `AutoRebateParams.DealerZIP` to the dealer's ZIP
     1. Set `Market` to the dealership's market ID you received from `GetMarketByZIP`

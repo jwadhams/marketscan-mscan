@@ -12,8 +12,11 @@ $mscan = new MScan($marketscan_partner_id, $marketscan_account );
 
 $scan_request = [
   "AutoRebateParams" => [
-    "ZIP" => 93012 //See README.md for description
+    "ZIP" => 95032, //Customer's ZIP code
+    "DealerZIP" => 93012 //Dealership ZIP code, must correspond to Market below
   ],
+  "Market" => 51, //This is the result of GetMarketByZIP, must correspond to dealership ZIP
+
   "CreditScore" => 890,
   //DesiredValue is desired profit for SCANTYPE_PROFIT
   //DesiredValue is selling price for SCANTYPE_SELLINGPRICE
@@ -29,7 +32,6 @@ $scan_request = [
     "RetailPart" => [
       "Cash" => [0, 1000, 2000, 3000],
       "Term" => [24, 36, 48, 60, 72],
-
     ],
 
   ],
@@ -40,7 +42,6 @@ $scan_request = [
 
   "RetailPart" => [],
 
-  "Market" => 51, //This is the result of GetMarketByZIP
   "ScanMode" => MScan::SCANMODE_MPENCIL,
   "ScanType" => MScan::SCANTYPE_SELLINGPRICE,
   "StateFeeTax" => [
