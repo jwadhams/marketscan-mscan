@@ -100,18 +100,11 @@ The library includes demo code to take a VIN and return a matrix of Lease and Re
 
 ## Getting to RunScan
 
-There is a lot of good stuff in the MarketScan API, but here's how to get to `RunScan` results (the very best stuff) ASAP.
+There is a lot of good stuff in the MarketScan API, but the very best stuff is in `RunScan` results.
 
-To set up your dealership:
+To build your [request object to pass to RunScan](http://www.marketscan.com/mScanAPIDocumentation/html/ed481d63-01f7-38fc-e444-c14233114f11.htm) for a vehicle (assuming you're starting with its VIN):
 
-  1. Run `GetMarketByZIP` for your dealership's ZIP and cache the Market ID
-  1. Download and cache `GetManufacturers`
-
-To `RunScan` for a vehicle (assuming you're starting with its VIN):
-
-  1. Get the MarketScan vehicle ID by calling `GetVehiclesByVINParams` with the VIN as the only string argument: `$mscan->GetVehiclesByVINParams($vin)`
-  1. Build your [request object to pass to RunScan](http://www.marketscan.com/mScanAPIDocumentation/html/ed481d63-01f7-38fc-e444-c14233114f11.htm).
-    1. Set `Vehicle.ID` to the value you received from `GetVehiclesByVINParams`
-    1. Set `AutoRebateParams.ZIP` to the customer's ZIP
-    1. Set `AutoRebateParams.DealerZIP` to the dealer's ZIP
-    1. Set `Market` to the dealership's market ID you received from `GetMarketByZIP`
+  1. Set `Vehicle.ID` to the value you received from `$mscan->GetVehiclesByVINParams($vin)`
+  1. Set `AutoRebateParams.ZIP` to the customer's ZIP
+  1. Set `AutoRebateParams.DealerZIP` to the dealer's ZIP
+  1. Set `Market` to the dealership's market ID you received from `$mscan->GetMarketByZIP($zip)` (the market ID can be cached indefinitely)
