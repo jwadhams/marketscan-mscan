@@ -211,6 +211,22 @@ class MScan
         return $this->call_request_synchronously($request);
     }
 
+    public function GetStateFeeTax($zip, $region_id = null, $in_city = null)
+    {
+        $append_to_url = $zip;
+        if($region_id){
+            $append_to_url .= '/' . $region_id;
+        }
+        if($in_city !== null){
+            $append_to_url .= '/' . self::bool_to_url_component($in_city);
+        }
+
+        return $this->call_api(
+            'GetStateFeeTax',
+            'GET',
+            $append_to_url
+        );
+    }
 
     //Can return region numbers based on vehicle and ZIP. If a ZIP straddles two regions, you can disambiguate by city in Name in the response
     //Can also return null -- possibly Manufacturer-based?
