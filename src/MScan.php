@@ -76,6 +76,152 @@ class MScan
         return $this->call_request_synchronously($request);
     }
 
+
+    public static function bool_to_url_component($bool)
+    {
+        return ($bool) ? "true" : "false";
+    }
+
+    public static function url_component_to_bool($string)
+    {
+        return (strtolower(trim($string)) === "true");
+    }
+
+
+    //Alphabetical API call implementations beyond this point
+
+    public function GetLenders()
+    {
+        return $this->call_api(
+            'GetLenders',
+            'GET'
+        );
+    }
+
+    public function GetMakes($is_new = true)
+    {
+        return $this->call_api(
+            'GetMakes',
+            'GET',
+            $this->bool_to_url_component($is_new)
+        );
+    }
+
+    /*
+    Given a vehicle ID, get the Manufacturer name and rebates ZIP policy
+    */
+    public function GetManufacturer($vehicle_id)
+    {
+        return $this->call_api(
+            'GetManufacturer',
+            'GET',
+            $vehicle_id
+        );
+    }
+
+    /*
+    Get a complete list of manufacturers, what make IDs belong to each manufacturer, and what that manufacturer's rebate ZIP policy is.
+
+    It might be more useful to transform this result into a simpler map like:
+    [
+        'make ID' => 'ZIP policy',
+        'make ID' => 'ZIP policy',
+    ]
+    */
+    public function GetManufacturers()
+    {
+        return $this->call_api(
+            'GetManufacturers',
+            'GET'
+        );
+    }
+
+    public function GetMarketByZIP($zip)
+    {
+        return $this->call_api(
+            'GetMarketByZIP',
+            'GET',
+            $zip
+        );
+    }
+
+    //Not clear why this doesn't take a filter by make, I guess you can get the global list (maybe rarely, once a day?) and filter it yourself?
+    public function GetModels($is_new = true)
+    {
+        return $this->call_api(
+            'GetModels',
+            'GET',
+            $this->bool_to_url_component($is_new)
+        );
+    }
+
+    public function GetProgramInfo($scan_data)
+    {
+        return $this->call_api(
+            'GetProgramInfo',
+            'POST',
+            '',
+            $scan_data
+        );
+    }
+
+    public function GetRebatesParams_request($parameters)
+    {
+        $defaults = [
+            'DateTimeStamp' => date(\DateTime::ISO8601), //'2016-09-13T03:07:46.069Z'
+            'IncludeExpired' => false
+        ];
+
+        return $this->api_request(
+            'GetRebatesParams',
+            'POST',
+            '',
+            array_merge($defaults, $parameters)
+        );
+    }
+
+    public function GetRebatesParams($parameters)
+    {
+        $request = $this->GetRebatesParams_request($parameters);
+        return $this->call_request_synchronously($request);
+    }
+
+    public function GetStateFeeTax($zip, $region_id = null, $in_city = null)
+    {
+        $append_to_url = $zip;
+        if($region_id){
+            $append_to_url .= '/' . $region_id;
+        }
+        if($in_city !== null){
+            $append_to_url .= '/' . self::bool_to_url_component($in_city);
+        }
+
+        return $this->call_api(
+            'GetStateFeeTax',
+            'GET',
+            $append_to_url
+        );
+    }
+
+    public function GetStateFeeTaxBulk()
+    {
+        return $this->call_api(
+            'GetStateFeeTaxBulk',
+            'GET'
+        );
+    }
+
+    //Can return region numbers based on vehicle and ZIP. If a ZIP straddles two regions, you can disambiguate by city in Name in the response
+    //Can also return null -- possibly Manufacturer-based?
+    public function GetVehicleRebateRegions($vehicle_id, $zip)
+    {
+        return $this->call_api(
+            'GetVehicleRebateRegions',
+            'GET',
+            $vehicle_id . '/' . $zip
+        );
+    }
+
     /*
     Note, when looking up a specific VIN from inventory, you're better off using GetVehiclesByVINParams and passing the VIN string as the only arg
     */
@@ -111,142 +257,22 @@ class MScan
         );
     }
 
-    public function GetLenders()
-    {
-        return $this->call_api(
-            'GetLenders',
-            'GET'
-        );
-    }
-
-    /*
-    Given a vehicle ID, get the Manufacturer name and rebates ZIP policy
-    */
-    public function GetManufacturer($vehicle_id)
-    {
-        return $this->call_api(
-            'GetManufacturer',
-            'GET',
-            $vehicle_id
-        );
-    }
-
-    /*
-    Get a complete list of manufacturers, what make IDs belong to each manufacturer, and what that manufacturer's rebate ZIP policy is.
-
-    It might be more useful to transform this result into a simpler map like:
-    [
-        'make ID' => 'ZIP policy',
-        'make ID' => 'ZIP policy',
-    ]
-    */
-    public function GetManufacturers()
-    {
-        return $this->call_api(
-            'GetManufacturers',
-            'GET'
-        );
-    }
-
-
-    public function GetMarketByZIP($zip)
-    {
-        return $this->call_api(
-            'GetMarketByZIP',
-            'GET',
-            $zip
-        );
-    }
-
-    public function GetMakes($is_new = true)
-    {
-        return $this->call_api(
-            'GetMakes',
-            'GET',
-            $this->bool_to_url_component($is_new)
-        );
-    }
-
-    //Not clear why this doesn't take a filter by make, I guess you can get the global list (maybe rarely, once a day?) and filter it yourself?
-    public function GetModels($is_new = true)
-    {
-        return $this->call_api(
-            'GetModels',
-            'GET',
-            $this->bool_to_url_component($is_new)
-        );
-    }
-
-    public function RunScan($scan_request)
-    {
-        return $this->call_api('RunScan', 'POST', '', $scan_request);
-
-        //In the response, AmountFinanced = Price + AcquisitionFee + InceptionFeesTaxes - TotalRebate - (customer cash which isn't part of the response?)
-    }
-
-    //So you want to run a few at once
+    /**
+     * Build Guzzle requests that can be run asynchronously, in parallel.
+     * This is especially useful if you need to support different banks with
+     * different mark-ups, then merge and sort the results.
+     */
     public function RunScan_request($scan_data)
     {
         return $this->api_request("RunScan", "POST", '', $scan_data);
     }
 
-
-    public function GetRebatesParams_request($parameters)
+    public function RunScan($scan_data)
     {
-        $defaults = [
-            'DateTimeStamp' => date(\DateTime::ISO8601), //'2016-09-13T03:07:46.069Z'
-            'IncludeExpired' => false
-        ];
-
-        return $this->api_request(
-            'GetRebatesParams',
-            'POST',
-            '',
-            array_merge($defaults, $parameters)
-        );
-    }
-    public function GetRebatesParams($parameters)
-    {
-        $request = $this->GetRebatesParams_request($parameters);
+        $request = $this->RunScan_request($scan_data);
         return $this->call_request_synchronously($request);
+
+        //In the response, AmountFinanced = Price + AcquisitionFee + InceptionFeesTaxes - TotalRebate - (customer cash which isn't part of the response?)
     }
 
-    public function GetStateFeeTax($zip, $region_id = null, $in_city = null)
-    {
-        $append_to_url = $zip;
-        if($region_id){
-            $append_to_url .= '/' . $region_id;
-        }
-        if($in_city !== null){
-            $append_to_url .= '/' . self::bool_to_url_component($in_city);
-        }
-
-        return $this->call_api(
-            'GetStateFeeTax',
-            'GET',
-            $append_to_url
-        );
-    }
-
-    //Can return region numbers based on vehicle and ZIP. If a ZIP straddles two regions, you can disambiguate by city in Name in the response
-    //Can also return null -- possibly Manufacturer-based?
-    public function GetVehicleRebateRegions($vehicle_id, $zip)
-    {
-        return $this->call_api(
-            'GetVehicleRebateRegions',
-            'GET',
-            $vehicle_id . '/' . $zip
-        );
-    }
-
-
-    public static function bool_to_url_component($bool)
-    {
-        return ($bool) ? "true" : "false";
-    }
-
-    public static function url_component_to_bool($string)
-    {
-        return (strtolower(trim($string)) === "true");
-    }
 }
