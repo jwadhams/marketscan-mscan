@@ -34,7 +34,7 @@ class MScan
 
     private $partner_id;
     private $account;
-    private $base_url = 'http://integration.marketscan.com/mscanservice/rest/mscanservice.rst/?';
+    private $base_url = 'http://mscanapi.com/rest/mScanService.rst/?';
 
     public function __construct($partner_id, $account, $base_url = null)
     {
